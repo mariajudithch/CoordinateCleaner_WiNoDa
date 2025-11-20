@@ -1,0 +1,181 @@
+---
+title: "dataherbarios"
+author: "MJCH"
+date: "2025-06-03"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggrepel)
+
+# Tus datos ajustados
+herbarios_data <- tribble(
+  ~country_raw,            ~n_herbarios,
+  "Argentina",             7,
+  "Barbados",              1,
+  "Bolivia",               1,
+  "Brasil",                1,
+  "Chile",                 2,
+  "Colombia",              8,
+  "Costa Rica",            1,
+  "Cuba",                  1,
+  "Ecuador",               5,
+  "El Salvador",           2,
+  "Honduras",              1,
+  "Jamaica",               1,
+  "Mexico",               10,
+  "Panama",                1,
+  "Peru",                 12,
+  "Puerto Rico",           1,
+  "Suriname",              1,
+  "Trinidad y Tobago",     1,
+  "Uruguay",               1,
+  "United States",         3,
+  "Venezuela",             3
+)
+
+# Corregimos nombres para unir con rnaturalearth
+herbarios_clean <- herbarios_data %>%
+  mutate(country = case_when(
+    country_raw == "Brasil" ~ "Brazil",
+    country_raw == "Mexico" ~ "Mexico",
+    country_raw == "United States" ~ "United States of America",
+    country_raw == "Trinidad y Tobago" ~ "Trinidad and Tobago",
+    country_raw == "Internacional" ~ NA_character_,
+    TRUE ~ country_raw
+  )) %>%
+  group_by(country) %>%
+  summarise(n_herbarios = sum(n_herbarios, na.rm = TRUE)) %>%
+  filter(!is.na(country))
+
+```
+
+
+```{r}
+# Mapa del mundo
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Filtrar continente americano
+americas <- world %>%
+  filter(region_un == "Americas")
+
+# Unir datos
+map_data <- americas %>%
+  left_join(herbarios_clean, by = c("name" = "country"))
+
+```
+
+
+
+
+```{r setup, include=FALSE}
+# Calcular los centroides (asegúrate de que `map_data` sea un objeto sf válido)
+centroids <- map_data %>%
+  filter(!is.na(n_herbarios)) %>%
+  st_centroid()
+
+ggplot(data = map_data) +
+  geom_sf(aes(fill = n_herbarios), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    name = "Herbaria Contacted",
+    low = "#deebf7", high = "#08519c", na.value = "gray95"
+  ) +
+  # Punto en el centroide
+  geom_sf(data = centroids, shape = 21, fill = "white", color = "gray50", size = 5, stroke = 0.3) +
+  # Texto en negrita sobre el punto
+  geom_sf_text(
+    data = centroids,
+    aes(label = n_herbarios),
+    size = 3,
+    color = "gray30",
+    fontface = "bold",
+    family = "Arial"
+  ) +
+  coord_sf(xlim = c(-180, -30), ylim = c(-60, 80), expand = FALSE) +
+  theme_minimal(base_family = "Arial") +
+  theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(color = "gray80", fill = NA, linewidth = 0.5),
+    legend.position = "right",
+    legend.title = element_text(color = "gray50", family = "Arial"),
+    legend.text = element_text(color = "gray50", family = "Arial"),
+    axis.text = element_text(color = "gray50", family = "Arial"),
+    axis.title = element_blank(),
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    plot.caption = element_blank()
+  )
+
+
+```
+
+
+```{r}
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(shadowtext)
+
+# Suponiendo que tienes un objeto map_data con polígonos por país y n_herbarios
+paises_repositorio <- c("Brazil", "Venezuela", "Peru", "Ecuador", "Guatemala")
+
+# Centroides con variable lógica
+centroids <- map_data %>%
+  filter(!is.na(n_herbarios)) %>%
+  st_centroid(of_largest_polygon = TRUE) %>%
+  mutate(
+    repo = ifelse(name %in% paises_repositorio, "Yes", "No")
+  )
+
+# Crear plot
+ggplot() +
+  # 1. Mapa base con gradiente por número de herbarios
+  geom_sf(data = map_data, aes(fill = n_herbarios), color = "gray95", size = 0.3) +
+  scale_fill_gradient(
+    name = "Herbaria Contacted",
+    low = "#deebf7", high = "#08519c", na.value = "gray95"
+  ) +
+
+  # 2. Puntos con color por presencia de repositorio, usando `color` en lugar de fill
+  geom_sf(data = centroids, aes(geometry = geometry, color = repo), shape = 21, fill = "white", size = 6, stroke = 1) +
+  scale_color_manual(
+    values = c("Yes" = "orange", "No" = "gray70"),
+    guide = "none",
+    labels = NULL,
+    name = NULL
+  ) +
+
+  # 3. Números con buffer blanco (usamos shadowtext)
+  shadowtext::geom_shadowtext(
+    data = centroids,
+    aes(geometry = geometry, label = n_herbarios),
+    size = 3, fontface = "bold", color = "gray20", bg.color = "white",
+    family = "Arial",
+    stat = "sf_coordinates"
+  ) +
+
+  # 4. Estética general
+  coord_sf(xlim = c(-180, -30), ylim = c(-60, 80), expand = FALSE) +
+  theme_minimal(base_family = "Arial") +
+    theme(
+    panel.grid = element_blank(),
+    panel.border = element_rect(color = "gray90", fill = NA, linewidth = 1),
+    legend.position = c(0.15, 0.15), # leyenda dentro, abajo derecha
+    legend.background = element_rect(fill = "white", color = "gray90", size = 0.5), # fondo blanco con borde suave
+    legend.title = element_text(color = "gray30", size = 12),
+    legend.text = element_text(color = "gray50", size = 12),
+    axis.text = element_text(color = "gray60"),
+    axis.title = element_blank(),
+    plot.caption = element_text(color = "gray50", size = 9, family = "Arial", hjust = 0)
+  ) +
+  labs(
+    caption = "*Orange circles indicate countries with herbarium data repositories.\nBrazil's repository includes +43 herbaria."
+  )
+```
+
+
+
