@@ -652,7 +652,7 @@ ggplot() +
 # Exporting the cleaned dataset
 
 ```{r export}
-write_csv(cleaned_all, "epiphytes_cleaned_coordinates.csv")
+write_csv(cleaned_all, "output/epiphytes_cleaned_coordinates.csv")
 ```
 
 ```{r summary_tests}
