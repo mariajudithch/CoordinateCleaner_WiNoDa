@@ -1,27 +1,676 @@
 ---
-title: "Tutorial"
-author: "Maria Judith Carmona Higuita"
-format: html
-editor: visual
+title: "Using CoordinateCleaner to flag recurrent errors in collection databases"
+subtitle: "<span style='color:#1f77b4;'>WiNoDa School 2025</span> – Epiphyte Case Study"
+author: "Maria Judith Carmona Higuita<sup>*</sup>"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    theme: cosmo
+    number-sections: true
+    code-fold: true
 ---
 
-## Quarto
+<em><sup>\*</sup>Workshop by <strong>Maria Judith Carmona Higuita</strong> and <strong>Prof. Dr. Alexander Zizka</strong> (University of Marburg), as part of the [WiNoDa School 2025]{style="color:#1f77b4;"}.</em>
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+------------------------------------------------------------------------
 
-## Running Code
+> This tutorial is <em>based on and enriched from</em> the CoordinateCleaner vignette\
+> <strong>“Cleaning GBIF data for the use in biogeography”</strong>\
+> (<code>Source: vignettes/Cleaning_GBIF_data_with_CoordinateCleaner.Rmd</code>, available at\
+> <a href="https://ropensci.github.io/CoordinateCleaner/articles/Cleaning_GBIF_data_with_CoordinateCleaner.html">https://ropensci.github.io/CoordinateCleaner/articles/Cleaning_GBIF_data_with_CoordinateCleaner.html</a>)
+>
+> and on the article:\
+> <em>Zizka, A., Silvestro, D., Andermann, T., et al.</em> (2019).\
+> <strong>CoordinateCleaner: Standardized cleaning of occurrence records from biological collection databases.</strong>\
+> <em>Methods in Ecology and Evolution, 10</em>, 744–751.\
+> <a href="https://doi.org/10.1111/2041-210X.13152">https://doi.org/10.1111/2041-210X.13152</a>
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+```{r options, echo = FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4.5
+)
 ```
 
-You can add options to executable code like this
+# Background
 
-```{r}
-#| echo: false
-2 * 2
+Herbarium collections are one of the most important sources of biodiversity information in the world.  
+They document more than two centuries of botanical exploration, often including unique historical
+specimens, type material, and extensive records from remote regions. Many of these data are now shared
+through GBIF, making herbarium collections a cornerstone for biogeography, conservation, and ecological
+research.
+
+However, herbarium data come with a characteristic set of challenges. Specimens are often collected in
+the field and later distributed as *duplicates* to several institutions. Each institution may
+georeference, digitize, or update metadata independently, creating inconsistencies across datasets.
+Common problems in herbarium-based GBIF records include:
+
+- missing or imprecise coordinates  
+- retroactively georeferenced localities with large uncertainties  
+- (0,0) or swapped latitude/longitude  
+- sea coordinates for terrestrial plants  
+- mismatches between coordinates and country or region  
+- institution or city-centroid coordinates assigned during batch georeferencing  
+- large numbers of duplicates across different herbarium datasets
+
+In this tutorial, we focus on epiphytic plants and work with data from several herbaria in the northern
+Andes (e.g., **COL**, **HUA**, and **MO**) to demonstrate how to:
+
+1. download or load GBIF data from multiple herbarium collections  
+2. visualize raw specimen locations on a map  
+3. detect recurrent spatial errors using *CoordinateCleaner*  
+4. identify duplicates and inconsistencies between institutions  
+5. export a cleaned dataset for downstream analyses
+
+This tutorial is based on, and enriches, the vignette *“Cleaning GBIF data for the use in biogeography”*
+from the **CoordinateCleaner** package and the article by Zizka *et al.* (2019).
+
+# Install packages 
+
+```{r install_packages}
+install.packages(c(
+  "CoordinateCleaner",
+  "countrycode",
+  "dplyr",
+  "ggplot2",
+  "rgbif",
+  "sf",
+  "tibble",
+  "readr"
+))
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+# Load libraries 
+
+```{r libraries}
+library(CoordinateCleaner)
+library(countrycode)
+library(dplyr)
+library(ggplot2)
+library(rgbif)
+library(sf)
+library(tibble)
+library(readr)
+```
+
+# Obtaining herbarium data from GBIF
+
+GBIF stands for **Global Biodiversity Information Facility**.  
+It is an international open-data platform that aggregates biodiversity records from thousands of sources, including:
+
+- natural history museums  
+- herbaria  
+- universities and research institutions  
+- citizen-science platforms (e.g., iNaturalist)  
+- government monitoring programs  
+
+GBIF does **not** collect specimens itself.  
+Instead, it provides a single global portal where data providers can share information about:
+
+Before working with GBIF data, it is important to understand how biodiversity records are described.  
+GBIF uses an international standard called **Darwin Core**, which acts as a shared vocabulary used by museums, herbaria, researchers, and citizen‑science platforms.  
+Darwin Core ensures that information coming from many different sources can be combined and interpreted in a consistent way.
+
+One key Darwin Core field is **basisOfRecord**.  
+This field describes *what type of record* we are looking at and *how the observation or specimen was obtained*.
+
+Some common basisOfRecord values you will encounter are:
+
+1. **PRESERVED_SPECIMEN** – a physical specimen stored in a herbarium or museum.  
+   These specimens have labels with locality, date, and collector information, and they can be re‑examined and re‑identified.
+2. **HUMAN_OBSERVATION** – a person observed the organism but did not collect it.  
+   Many of these come from platforms like iNaturalist and often have good coordinates.
+3. **OBSERVATION** – similar to HUMAN_OBSERVATION, but less specific in origin.
+4. **MACHINE_OBSERVATION** – observations recorded automatically (camera traps, sensors).  
+5. **MATERIAL_SAMPLE** – tissue samples, soil, DNA extracts, or other non‑whole organism samples.
+6. **FOSSIL_SPECIMEN** – paleontological material, not suitable for modern species distribution analyses.
+
+For this workshop, we focus on **herbarium data**, so we keep only  
+`basisOfRecord == "PRESERVED_SPECIMEN"`.
+
+These records correspond to real, physical vouchers collected by botanists and curated in an institution.  
+They are the most reliable type of record for understanding species distributions and for identifying coordinate errors, because:
+
+- they have verifiable taxonomy,
+- they include original label information,
+- and many specimens belong to “duplicate sets” historically distributed among different herbaria.
+
+Other record types, such as HUMAN_OBSERVATION, can be useful in modern biodiversity research, especially high‑quality iNaturalist observations.  
+However, they follow different sampling patterns, cannot be re‑examined, and are better handled in workflows dedicated to observational data.  
+
+## Downloading data from GBIF
+
+```{r download_herbaria}
+# Download herbarium records from GBIF using 'rgbif'
+# We use three institutions as an example: COL, HUA, MO
+
+herbaria <- c("COL", "HUA", "MO")
+
+gbif_list <- lapply(herbaria, function(inst) {
+
+  message("Downloading records for institutionCode = ", inst)
+
+  res <- occ_search(
+    institutionCode = inst,
+    hasCoordinate   = TRUE,
+    limit           = 5000
+  )
+
+  res$data
+})
+
+# Combine all downloaded records into one table
+dat_raw <- dplyr::bind_rows(gbif_list)
+
+# Inspect structure
+str(dat_raw)
+
+# Save a local copy so participants can load it without downloading
+if (!dir.exists("data")) dir.create("data")
+readr::write_csv(dat_raw, "data/herbaria_raw_epiphytes.csv")
+```
+
+## Loading a pre-downloaded dataset
+
+For participants who cannot retrieve data directly from GBIF during the session,  
+the same dataset is stored in the `data/` folder.
+
+```{r load_csv}
+# Load the previously saved GBIF dataset
+
+dat_raw <- readr::read_csv("data/herbaria_raw_epiphytes.csv")
+
+# Check dimensions
+dim(dat_raw)
+```
+
+## Column selection + filter
+
+```{r prepare_data}
+dat <- dat_raw %>% 
+  dplyr::select(
+    species,
+    decimalLongitude,
+    decimalLatitude,
+    countryCode,
+    year,
+    basisOfRecord,
+    individualCount,
+    institutionCode,
+    datasetName,
+    gbifID
+  ) %>%
+  dplyr::filter(!is.na(decimalLongitude),
+                !is.na(decimalLatitude)) %>%
+  dplyr::filter(basisOfRecord == "PRESERVED_SPECIMEN") %>%
+  dplyr::rename(lon = decimalLongitude,
+                lat = decimalLatitude)
+
+dat <- dat %>%
+     mutate(
+         lon = as.numeric(lon),
+         lat = as.numeric(lat)
+     )
+
+glimpse(dat)
+```
+
+# First look at the raw data
+
+After loading the data, it is useful to explore the dataset to understand its structure and identify any obvious problems.
+
+```{r summaries}
+# number of records
+nrow(dat_raw)
+
+# names of all columns
+names(dat_raw)
+
+# quick preview
+head(dat_raw)
+```
+
+We now work with the filtered dataset `dat`, which contains only PRESERVED_SPECIMEN
+records with valid coordinates.
+
+```{r summaries_filtered}
+# number of cleaned records
+nrow(dat)
+
+# structure of the filtered data
+str(dat)
+
+# basic summary of coordinate ranges
+summary(dat[, c("lon", "lat")])
+```
+
+## Visualising the raw coordinates
+
+A simple map helps identify obvious issues such as points in the ocean, far outside the expected region, duplicated coordinates, or strong clustering around cities or institutions.
+
+```{r raw_map}
+world_map <- borders("world", colour = "gray70", fill = "gray90")
+
+ggplot() +
+  world_map +
+  coord_fixed() +
+  geom_point(
+    data = dat,
+    aes(x = lon, y = lat, colour = institutionCode),
+    size = 0.7,
+    alpha = 0.7
+  ) +
+  labs(
+    title = "Raw herbarium records from GBIF",
+    subtitle = "Colour indicates institutionCode",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  theme_bw()
+```
+
+This first map usually reveals patterns such as:
+- duplicated specimens appearing at exactly the same coordinates,
+- historical specimens georeferenced to country centroids,
+- specimens assigned to a biodiversity institution instead of the true locality,
+- specimens plotted in the sea due to errors in decimal degrees or swapped coordinates.
+
+We will address these issues using CoordinateCleaner in the next steps.
+
+# Common coordinate problems and how to flag them
+
+CoordinateCleaner provides a set of tests that identify typical errors found in herbarium data.
+These tests operate at the **record level**, flagging individual coordinates that are likely incorrect.
+Here we apply the most relevant tests for collection-based datasets.
+
+Before running any test, we define a helper function that will help us visualise flagged and kept points.
+
+```{r helper_plot}
+plot_flags <- function(data, keep, title) {
+  # 'keep' is a logical vector: TRUE = kept, FALSE = problematic
+
+  data_kept    <- data[keep, ]
+  data_flagged <- data[!keep, ]
+
+  world_map <- borders("world", colour = "gray70", fill = "gray90")
+
+  ggplot() +
+    world_map +
+    coord_fixed() +
+    geom_point(
+      data = data_kept,
+      aes(lon, lat),
+      color = "darkgreen",
+      size = 0.6,
+      alpha = 0.7
+    ) +
+    geom_point(
+      data = data_flagged,
+      aes(lon, lat),
+      color = "red",
+      size = 0.8,
+      alpha = 0.8
+    ) +
+    labs(
+      title = title,
+      subtitle = "Green = kept, Red = flagged"
+    ) +
+    theme_bw()
+}
+```
+
+---
+
+## Invalid coordinates  
+Coordinates outside the valid numeric range or containing impossible values.
+
+```{r invalid}
+flag_val <- cc_val(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"  # TRUE = problematic, FALSE = kept
+)
+```
+
+All valid coordinates
+
+---
+
+## Zero coordinates  
+A common placeholder when coordinates were not available or failed to geocode.
+
+```{r zero}
+flag_zero <- cc_zero(
+  x = dat,
+  lon = "lon",
+  lat = "lat"
+)
+```
+
+we do not have coordinates in 0,0
+
+---
+
+## Sea coordinates  
+Herbarium specimens should not be in the ocean, so this test removes incorrect decimal values or swapped coordinates.
+
+```{r sea}
+flag_sea <- cc_sea(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"  # TRUE = in the sea, FALSE = kept
+)
+
+flag_sea <- as.logical(flag_sea)
+
+n_total   <- length(flag_sea)
+n_flagged <- sum(flag_sea, na.rm = TRUE)
+n_kept    <- n_total - n_flagged
+
+cat("Sea coordinates test\n")
+cat("  Total records:", n_total, "\n")
+cat("  Kept (on land):", n_kept, "\n")
+cat("  Flagged (in sea):", n_flagged, "\n\n")
+
+plot_flags(dat, flag_sea, "Sea coordinates flagged by cc_sea()")
+
+dat <- dat[flag_sea, ] # here we remove the flagged records
+nrow(dat)
+```
+
+---
+
+## Country mismatch  
+Here we check whether coordinates fall inside the country indicated in the record.  
+We first convert country codes to ISO3, as required by `cc_coun()`.
+
+```{r cc_country_prepare}
+dat <- dat %>%
+  dplyr::mutate(
+    countryCode = countrycode(
+      countryCode,
+      origin = "iso2c",
+      destination = "iso3c"
+    )
+  )
+```
+
+```{r cc_country}
+flag_country <- cc_coun(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  iso3    = "countryCode",
+  value   = "flagged"  # TRUE = mismatch, FALSE = kept
+)
+
+flag_country <- as.logical(flag_country)
+
+n_total   <- length(flag_country)
+n_flagged <- sum(flag_country, na.rm = TRUE)
+n_kept    <- n_total - n_flagged
+
+cat("Country mismatch test\n")
+cat("  Total records:", n_total, "\n")
+cat("  Kept (matching country):", n_kept, "\n")
+cat("  Flagged (country mismatch):", n_flagged, "\n\n")
+
+plot_flags(dat, flag_country, "Country mismatches flagged by cc_coun()")
+
+dat <- dat[flag_country, ]
+nrow(dat)
+```
+
+---
+
+## Duplicated records  
+Herbaria often exchange duplicates of the same collection.  
+This test flags exact duplicates based on species name and coordinates.
+
+```{r cc_duplicates}
+flag_dupl <- cc_dupl(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  species = "species",
+  value   = "flagged"
+)
+
+flag_dupl <- as.logical(flag_dupl)
+
+n_total   <- length(flag_dupl)
+n_flagged <- sum(flag_dupl, na.rm = TRUE)
+n_kept    <- n_total - n_flagged
+
+cat("Duplicates test\n")
+cat("  Total records:", n_total, "\n")
+cat("  Kept (unique coordinates per species):", n_kept, "\n")
+cat("  Flagged (duplicated records):", n_flagged, "\n\n")
+
+plot_flags(dat, flag_dupl, "Duplicated records flagged by cc_dupl()")
+
+dat <- dat[flag_dupl, ]
+nrow(dat)
+```
+
+---
+
+## Institution coordinates  
+Many specimens are (incorrectly) georeferenced to the herbarium’s address instead of the collection locality.
+
+```{r institutions}
+flag_inst <- cc_inst(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"
+)
+
+flag_inst <- as.logical(flag_inst)
+
+n_total   <- length(flag_inst)
+n_flagged <- sum(flag_inst, na.rm = TRUE)
+n_kept    <- n_total - n_flagged
+
+cat("Institution coordinates test\n")
+cat("  Total records:", n_total, "\n")
+cat("  Kept (not at institution):", n_kept, "\n")
+cat("  Flagged (institution coordinates):", n_flagged, "\n\n")
+
+plot_flags(dat, flag_inst, "Institution coordinates flagged by cc_inst()")
+
+dat <- dat[flag_inst, ]
+nrow(dat)
+```
+
+---
+
+## Capitals and centroids  
+Common geocoding artifacts where specimen locality is replaced by a political centroid. 
+
+```{r capitals_centroids}
+flag_cap <- cc_cap(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"
+)
+
+flag_cap <- as.logical(flag_cap)
+
+flag_cen <- cc_cen(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"
+)
+
+n_total_cap   <- length(flag_cap)
+n_flagged_cap <- sum(flag_cap, na.rm = TRUE)
+
+cat("Capitals test\n")
+cat("  Flagged (capital coordinates):", n_flagged_cap, "of", n_total_cap, "records\n")
+
+plot_flags(dat, flag_cap, "Capital coordinates flagged by cc_cap()")
+
+dat <- dat[flag_cap, ]
+nrow(dat)
+```
+
+---
+
+This step-by-step filtering produces a dataset that is progressively cleaner.
+In the next section, we will run the full cleaning procedure using the wrapper function `clean_coordinates()`.
+
+# All-in-one cleaning with clean_coordinates()
+
+We load again the raw data
+
+```{r}
+dat <- dat_raw %>% 
+  dplyr::select(
+    species,
+    decimalLongitude,
+    decimalLatitude,
+    countryCode,
+    year,
+    basisOfRecord,
+    individualCount,
+    institutionCode,
+    datasetName,
+    gbifID
+  ) %>%
+  dplyr::filter(!is.na(decimalLongitude),
+                !is.na(decimalLatitude)) %>%
+  dplyr::filter(basisOfRecord == "PRESERVED_SPECIMEN") %>%
+  dplyr::rename(lon = decimalLongitude,
+                lat = decimalLatitude)
+
+dat <- dat %>%
+     mutate(
+         lon = as.numeric(lon),
+         lat = as.numeric(lat)
+     )
+```
+
+And then perform the cleaning
+
+```{r clean_coordinates}
+dat_cc <- dat %>%
+  dplyr::mutate(
+    countryCode = countrycode(
+      countryCode,
+      origin = "iso2c",
+      destination = "iso3c"
+    )
+  )
+
+dat_cc <- as.data.frame(dat_cc)
+
+flags_all <- clean_coordinates(
+  x = dat_cc,
+  lon = "lon",
+  lat = "lat",
+  species = "species",
+  countries = "countryCode",
+  tests = c(
+    "capitals",
+    "centroids",
+    "equal",
+    "zeros",
+    "countries",
+    "institutions",
+    "seas",
+    "duplicates",
+    "gbif",
+    "validity"
+  )
+)
+
+summary(flags_all)
+table(flags_all$.summary)
+
+cleaned_all <- dat_cc[flags_all$.summary, ]
+nrow(dat_cc); nrow(cleaned_all)
+```
+
+```{r compare_maps}
+ggplot() +
+  world_map +
+  coord_fixed() +
+  geom_point(
+    data = dat_cc,
+    aes(x = lon, y = lat),
+    color = "gray60",
+    size = 0.4,
+    alpha = 0.6
+  ) +
+  geom_point(
+    data = cleaned_all,
+    aes(x = lon, y = lat),
+    color = "darkgreen",
+    size = 0.6,
+    alpha = 0.8
+  ) +
+  labs(
+    title = "Epiphyte GBIF records before (gray) and after cleaning (green)",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  theme_bw()
+```
+
+# Optional advanced step: spatial outliers
+
+```{r outliers}
+# flag_out <- cc_outl(
+#   x = cleaned_all,
+#   lon = "lon",
+#   lat = "lat",
+#   species = "species",
+#   method = "quantile",
+#   mltpl = 5,
+#   tdi = "km",
+#   thinning = FALSE
+# )
+# 
+# cleaned_no_out <- cleaned_all[flag_out, ]
+# nrow(cleaned_all); nrow(cleaned_no_out)
+```
+
+```{r outlier_map}
+# plot_flags(cleaned_all, flag_out, "Optional: spatial outliers flagged by cc_outl()")
+```
+
+# Exporting the cleaned dataset
+
+```{r export}
+write_csv(cleaned_all, "epiphytes_cleaned_coordinates.csv")
+```
+
+```{r summary_tests}
+flag_cols <- setdiff(names(flags_all), c(names(dat_cc), ".summary"))
+
+removed <- sapply(flags_all[flag_cols], function(x) sum(!x, na.rm = TRUE))
+
+data.frame(
+  test = flag_cols,
+  removed_records = as.integer(removed)
+)
+```
+
+# Wrap-up
+
+Coordinate cleaning is an essential step before any biogeographic analysis. CoordinateCleaner offers a simple, transparent, and reproducible pipeline to detect many of the most common spatial issues.
+
+However, this is just one of several available approaches.
+There are other R packages (e.g., scrubr, spocc, bdc, sperrorest utilities), custom GIS workflows, and even manual curation strategies that can also be used depending on the project. Different research groups, herbarium networks, and biodiversity platforms use different cleaning pipelines.
+
+The workflow presented here is meant to provide a straightforward and accessible option, especially for students and early-career researchers who need a clear, reproducible starting point.
