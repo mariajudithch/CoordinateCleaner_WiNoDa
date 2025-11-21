@@ -1,5 +1,5 @@
-# Using CoordinateCleaner to Flag Recurrent Errors in Collection Databases
-### *WiNoDa School 2025 – Epiphyte Case Study*
+# Using CoordinateCleaner to flag recurrent errors in collection databases
+### *WiNoDa School 2025 – Herbaria Case Study*
 
 **Author:** Maria Judith Carmona Higuita  
 **Co-instructor:** Prof. Dr. Alexander Zizka (University of Marburg)
