@@ -674,3 +674,4 @@ However, this is just one of several available approaches.
 There are other R packages (e.g., scrubr, spocc, bdc, sperrorest utilities), custom GIS workflows, and even manual curation strategies that can also be used depending on the project. Different research groups, herbarium networks, and biodiversity platforms use different cleaning pipelines.
 
 The workflow presented here is meant to provide a straightforward and accessible option, especially for students and early-career researchers who need a clear, reproducible starting point.
+
