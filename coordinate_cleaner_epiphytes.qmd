@@ -1,6 +1,6 @@
 ---
 title: "Using CoordinateCleaner to flag recurrent errors in collection databases"
-subtitle: "<span style='color:#1f77b4;'>WiNoDa School 2025</span> – Epiphyte Case Study"
+subtitle: "<span style='color:#1f77b4;'>WiNoDa School 2025</span> – Herbaria Case Study"
 author: "Maria Judith Carmona Higuita<sup>*</sup>"
 format:
   html:
@@ -29,7 +29,7 @@ format:
 
 ```{r options, echo = FALSE}
 knitr::opts_chunk$set(
-  eval = FALSE,
+  eval = TRUE,
   message = FALSE,
   warning = FALSE,
   fig.width = 7,
