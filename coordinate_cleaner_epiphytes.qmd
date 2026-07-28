@@ -78,6 +78,7 @@ install.packages(c(
   "countrycode",
   "dplyr",
   "ggplot2",
+  "maps",
   "rgbif",
   "sf",
   "tibble",
