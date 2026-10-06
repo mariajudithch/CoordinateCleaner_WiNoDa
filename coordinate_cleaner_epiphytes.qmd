@@ -80,6 +80,8 @@ install.packages(c(
   "ggplot2",
   "maps",
   "rgbif",
+  "rnaturalearth",
+  "rnaturalearthdata",
   "sf",
   "tibble",
   "readr"
@@ -146,7 +148,11 @@ However, they follow different sampling patterns, cannot be re‑examined, and a
 
 ## Downloading data from GBIF
 
-```{r download_herbaria}
+The download takes a while and needs a stable internet connection, so this chunk is not run
+when the tutorial is rendered. Run it yourself if you want fresh data from GBIF
+(note that it overwrites `data/herbaria_raw_epiphytes.csv`).
+
+```{r download_herbaria, eval = FALSE}
 # Download herbarium records from GBIF using 'rgbif'
 # We use three institutions as an example: COL, HUA, MO
 
@@ -184,7 +190,8 @@ the same dataset is stored in the `data/` folder.
 ```{r load_csv}
 # Load the previously saved GBIF dataset
 
-dat_raw <- readr::read_csv("data/herbaria_raw_epiphytes.csv")
+dat_raw <- readr::read_csv("data/herbaria_raw_epiphytes.csv",
+                           show_col_types = FALSE, guess_max = Inf)
 
 # Check dimensions
 dim(dat_raw)
@@ -289,11 +296,21 @@ CoordinateCleaner provides a set of tests that identify typical errors found in 
 These tests operate at the **record level**, flagging individual coordinates that are likely incorrect.
 Here we apply the most relevant tests for collection-based datasets.
 
-Before running any test, we define a helper function that will help us visualise flagged and kept points.
+Before running any test, we define two helper functions: one to visualise flagged and kept points,
+and one to print a short summary of each test.
+
+::: {.callout-important}
+## How to read the output of the tests
+
+With `value = "flagged"`, every CoordinateCleaner test returns a logical vector where
+**`TRUE` = the record passes the test (clean, we keep it)** and
+**`FALSE` = the record is flagged (problematic)**.
+That is why we call these vectors `keep_*` and filter with `dat[keep_*, ]`.
+:::
 
 ```{r helper_plot}
 plot_flags <- function(data, keep, title) {
-  # 'keep' is a logical vector: TRUE = kept, FALSE = problematic
+  # 'keep' is a logical vector: TRUE = kept, FALSE = flagged
 
   data_kept    <- data[keep, ]
   data_flagged <- data[!keep, ]
@@ -323,6 +340,35 @@ plot_flags <- function(data, keep, title) {
     ) +
     theme_bw()
 }
+
+report_test <- function(keep, name) {
+  cat(name, "\n")
+  cat("  Total records:  ", length(keep), "\n")
+  cat("  Kept (clean):   ", sum(keep, na.rm = TRUE), "\n")
+  cat("  Flagged:        ", sum(!keep, na.rm = TRUE), "\n\n")
+}
+```
+
+The sea test needs a map of the land masses, which is downloaded from
+[Natural Earth](https://www.naturalearthdata.com/). We download it once here.
+If the download fails (for example, with a slow or no internet connection during the workshop),
+we fall back to the country polygons that come installed with `rnaturalearthdata`, so the
+tutorial still runs.
+
+```{r land_reference}
+get_land <- function(scale) {
+  tryCatch(
+    rnaturalearth::ne_download(scale = scale, type = "land",
+                               category = "physical", returnclass = "sf"),
+    error = function(e) {
+      message("Natural Earth download failed; using country polygons instead.")
+      rnaturalearth::ne_countries(scale = scale, returnclass = "sf")
+    }
+  )
+}
+
+land_110 <- get_land(110)  # default resolution of cc_sea()
+land_50  <- get_land(50)   # default resolution of clean_coordinates()
 ```
 
 ---
@@ -331,15 +377,17 @@ plot_flags <- function(data, keep, title) {
 Coordinates outside the valid numeric range or containing impossible values.
 
 ```{r invalid}
-flag_val <- cc_val(
+keep_val <- cc_val(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
-  value   = "flagged"  # TRUE = problematic, FALSE = kept
+  value   = "flagged"  # TRUE = kept, FALSE = flagged
 )
+
+report_test(keep_val, "Invalid coordinates test")
 ```
 
-All valid coordinates
+All coordinates are valid.
 
 ---
 
@@ -347,42 +395,37 @@ All valid coordinates
 A common placeholder when coordinates were not available or failed to geocode.
 
 ```{r zero}
-flag_zero <- cc_zero(
-  x = dat,
-  lon = "lon",
-  lat = "lat"
+keep_zero <- cc_zero(
+  x       = dat,
+  lon     = "lon",
+  lat     = "lat",
+  value   = "flagged"
 )
+
+report_test(keep_zero, "Zero coordinates test")
 ```
 
-we do not have coordinates in 0,0
+We do not have coordinates at (0,0).
 
 ---
 
 ## Sea coordinates  
-Herbarium specimens should not be in the ocean, so this test removes incorrect decimal values or swapped coordinates.
+Herbarium specimens should not be in the ocean, so this test flags incorrect decimal values or swapped coordinates.
 
 ```{r sea}
-flag_sea <- cc_sea(
+keep_sea <- cc_sea(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
-  value   = "flagged"  # TRUE = in the sea, FALSE = kept
+  ref     = land_110,
+  value   = "flagged"  # TRUE = on land (kept), FALSE = in the sea (flagged)
 )
 
-flag_sea <- as.logical(flag_sea)
+report_test(keep_sea, "Sea coordinates test")
 
-n_total   <- length(flag_sea)
-n_flagged <- sum(flag_sea, na.rm = TRUE)
-n_kept    <- n_total - n_flagged
+plot_flags(dat, keep_sea, "Sea coordinates flagged by cc_sea()")
 
-cat("Sea coordinates test\n")
-cat("  Total records:", n_total, "\n")
-cat("  Kept (on land):", n_kept, "\n")
-cat("  Flagged (in sea):", n_flagged, "\n\n")
-
-plot_flags(dat, flag_sea, "Sea coordinates flagged by cc_sea()")
-
-dat <- dat[flag_sea, ] # here we remove the flagged records
+dat <- dat[keep_sea, ] # here we remove the flagged records
 nrow(dat)
 ```
 
@@ -404,28 +447,19 @@ dat <- dat %>%
 ```
 
 ```{r cc_country}
-flag_country <- cc_coun(
+keep_country <- cc_coun(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
   iso3    = "countryCode",
-  value   = "flagged"  # TRUE = mismatch, FALSE = kept
+  value   = "flagged"  # TRUE = matching country (kept), FALSE = mismatch (flagged)
 )
 
-flag_country <- as.logical(flag_country)
+report_test(keep_country, "Country mismatch test")
 
-n_total   <- length(flag_country)
-n_flagged <- sum(flag_country, na.rm = TRUE)
-n_kept    <- n_total - n_flagged
+plot_flags(dat, keep_country, "Country mismatches flagged by cc_coun()")
 
-cat("Country mismatch test\n")
-cat("  Total records:", n_total, "\n")
-cat("  Kept (matching country):", n_kept, "\n")
-cat("  Flagged (country mismatch):", n_flagged, "\n\n")
-
-plot_flags(dat, flag_country, "Country mismatches flagged by cc_coun()")
-
-dat <- dat[flag_country, ]
+dat <- dat[keep_country, ]
 nrow(dat)
 ```
 
@@ -436,7 +470,7 @@ Herbaria often exchange duplicates of the same collection.
 This test flags exact duplicates based on species name and coordinates.
 
 ```{r cc_duplicates}
-flag_dupl <- cc_dupl(
+keep_dupl <- cc_dupl(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
@@ -444,20 +478,11 @@ flag_dupl <- cc_dupl(
   value   = "flagged"
 )
 
-flag_dupl <- as.logical(flag_dupl)
+report_test(keep_dupl, "Duplicates test")
 
-n_total   <- length(flag_dupl)
-n_flagged <- sum(flag_dupl, na.rm = TRUE)
-n_kept    <- n_total - n_flagged
+plot_flags(dat, keep_dupl, "Duplicated records flagged by cc_dupl()")
 
-cat("Duplicates test\n")
-cat("  Total records:", n_total, "\n")
-cat("  Kept (unique coordinates per species):", n_kept, "\n")
-cat("  Flagged (duplicated records):", n_flagged, "\n\n")
-
-plot_flags(dat, flag_dupl, "Duplicated records flagged by cc_dupl()")
-
-dat <- dat[flag_dupl, ]
+dat <- dat[keep_dupl, ]
 nrow(dat)
 ```
 
@@ -467,61 +492,49 @@ nrow(dat)
 Many specimens are (incorrectly) georeferenced to the herbarium’s address instead of the collection locality.
 
 ```{r institutions}
-flag_inst <- cc_inst(
+keep_inst <- cc_inst(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
   value   = "flagged"
 )
 
-flag_inst <- as.logical(flag_inst)
+report_test(keep_inst, "Institution coordinates test")
 
-n_total   <- length(flag_inst)
-n_flagged <- sum(flag_inst, na.rm = TRUE)
-n_kept    <- n_total - n_flagged
+plot_flags(dat, keep_inst, "Institution coordinates flagged by cc_inst()")
 
-cat("Institution coordinates test\n")
-cat("  Total records:", n_total, "\n")
-cat("  Kept (not at institution):", n_kept, "\n")
-cat("  Flagged (institution coordinates):", n_flagged, "\n\n")
-
-plot_flags(dat, flag_inst, "Institution coordinates flagged by cc_inst()")
-
-dat <- dat[flag_inst, ]
+dat <- dat[keep_inst, ]
 nrow(dat)
 ```
 
 ---
 
 ## Capitals and centroids  
-Common geocoding artifacts where specimen locality is replaced by a political centroid. 
+Common geocoding artifacts where specimen locality is replaced by a country capital or a political centroid. 
 
 ```{r capitals_centroids}
-flag_cap <- cc_cap(
+keep_cap <- cc_cap(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
   value   = "flagged"
 )
 
-flag_cap <- as.logical(flag_cap)
-
-flag_cen <- cc_cen(
+keep_cen <- cc_cen(
   x       = dat,
   lon     = "lon",
   lat     = "lat",
   value   = "flagged"
 )
 
-n_total_cap   <- length(flag_cap)
-n_flagged_cap <- sum(flag_cap, na.rm = TRUE)
+report_test(keep_cap, "Capitals test")
+report_test(keep_cen, "Centroids test")
 
-cat("Capitals test\n")
-cat("  Flagged (capital coordinates):", n_flagged_cap, "of", n_total_cap, "records\n")
+keep_capcen <- keep_cap & keep_cen
 
-plot_flags(dat, flag_cap, "Capital coordinates flagged by cc_cap()")
+plot_flags(dat, keep_capcen, "Capital/centroid coordinates flagged by cc_cap() + cc_cen()")
 
-dat <- dat[flag_cap, ]
+dat <- dat[keep_capcen, ]
 nrow(dat)
 ```
 
@@ -534,7 +547,7 @@ In the next section, we will run the full cleaning procedure using the wrapper f
 
 We load again the raw data
 
-```{r}
+```{r reload_data}
 dat <- dat_raw %>% 
   dplyr::select(
     species,
@@ -581,6 +594,7 @@ flags_all <- clean_coordinates(
   lat = "lat",
   species = "species",
   countries = "countryCode",
+  seas_ref = land_50,
   tests = c(
     "capitals",
     "centroids",
@@ -630,29 +644,33 @@ ggplot() +
 
 # Optional advanced step: spatial outliers
 
-```{r outliers}
-# flag_out <- cc_outl(
-#   x = cleaned_all,
-#   lon = "lon",
-#   lat = "lat",
-#   species = "species",
-#   method = "quantile",
-#   mltpl = 5,
-#   tdi = "km",
-#   thinning = FALSE
-# )
-# 
-# cleaned_no_out <- cleaned_all[flag_out, ]
-# nrow(cleaned_all); nrow(cleaned_no_out)
+This step is not run when the tutorial is rendered. Remove `eval = FALSE` (or copy the code)
+to try it yourself. Species with fewer than 7 unique records are not tested.
+
+```{r outliers, eval = FALSE}
+keep_out <- cc_outl(
+  x = cleaned_all,
+  lon = "lon",
+  lat = "lat",
+  species = "species",
+  method = "quantile",
+  mltpl = 5,
+  tdi = 1000,          # distance threshold in km
+  value = "flagged"    # TRUE = kept, FALSE = outlier
+)
+
+cleaned_no_out <- cleaned_all[keep_out, ]
+nrow(cleaned_all); nrow(cleaned_no_out)
 ```
 
-```{r outlier_map}
-# plot_flags(cleaned_all, flag_out, "Optional: spatial outliers flagged by cc_outl()")
+```{r outlier_map, eval = FALSE}
+plot_flags(cleaned_all, keep_out, "Optional: spatial outliers flagged by cc_outl()")
 ```
 
 # Exporting the cleaned dataset
 
 ```{r export}
+if (!dir.exists("output")) dir.create("output")
 write_csv(cleaned_all, "output/epiphytes_cleaned_coordinates.csv")
 ```
 

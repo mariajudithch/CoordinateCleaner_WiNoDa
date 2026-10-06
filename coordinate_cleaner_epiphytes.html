@@ -69,7 +69,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="coordinate_cleaner_epiphytes_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="coordinate_cleaner_epiphytes_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="coordinate_cleaner_epiphytes_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="coordinate_cleaner_epiphytes_files/libs/bootstrap/bootstrap-813c323200a87c37e262811031999de4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="coordinate_cleaner_epiphytes_files/libs/bootstrap/bootstrap-c016981380a667282e644e947743abd3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -197,11 +197,14 @@ They document more than two centuries of botanical exploration, often including 
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"countrycode"</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dplyr"</span>,</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggplot2"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rgbif"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sf"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tibble"</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"readr"</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"maps"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rgbif"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rnaturalearth"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rnaturalearthdata"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sf"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tibble"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"readr"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -268,6 +271,7 @@ They are the most reliable type of record for understanding species distribution
 However, they follow different sampling patterns, cannot be re‑examined, and are better handled in workflows dedicated to observational data.</p>
 <section id="downloading-data-from-gbif" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="downloading-data-from-gbif"><span class="header-section-number">4.1</span> Downloading data from GBIF</h2>
+<p>The download takes a while and needs a stable internet connection, so this chunk is not run when the tutorial is rendered. Run it yourself if you want fresh data from GBIF (note that it overwrites <code>data/herbaria_raw_epiphytes.csv</code>).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -293,116 +297,11 @@ However, they follow different sampling patterns, cannot be re‑examined, and a
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>dat_raw <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(gbif_list)</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect structure</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>tibble [15,000 × 114] (S3: tbl_df/tbl/data.frame)
- $ key                             : chr [1:15000] "5054558306" "5868815018" "5868814678" "5831595616" ...
- $ scientificName                  : chr [1:15000] "Anthurium Schott" "Greigia Regel" "Greigia Regel" "Marcgraviaceae" ...
- $ decimalLatitude                 : num [1:15000] -9.22 3.89 5.81 -8.49 -8.49 ...
- $ decimalLongitude                : num [1:15000] -75.8 -74.5 -75.3 -76.1 -76.1 ...
- $ issues                          : chr [1:15000] "cdround,gass84,txmathi,osiic,inmano" "cdround,gass84,txmathi,osiic,inmano" "cdround,gass84,txmathi,osiic,inmano" "cdround,gass84,osiic,inmano" ...
- $ datasetKey                      : chr [1:15000] "e053ff53-c156-4e2e-b9b5-4462e9625424" "e053ff53-c156-4e2e-b9b5-4462e9625424" "e053ff53-c156-4e2e-b9b5-4462e9625424" "e053ff53-c156-4e2e-b9b5-4462e9625424" ...
- $ publishingOrgKey                : chr [1:15000] "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" ...
- $ installationKey                 : chr [1:15000] "c4e134d3-c68f-406d-a116-6a37895602e0" "c4e134d3-c68f-406d-a116-6a37895602e0" "c4e134d3-c68f-406d-a116-6a37895602e0" "c4e134d3-c68f-406d-a116-6a37895602e0" ...
- $ hostingOrganizationKey          : chr [1:15000] "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" "90fd6680-349f-11d8-aa2d-b8a03c50a862" ...
- $ publishingCountry               : chr [1:15000] "US" "US" "US" "US" ...
- $ protocol                        : chr [1:15000] "EML" "EML" "EML" "EML" ...
- $ lastCrawled                     : chr [1:15000] "2025-11-19T04:07:10.017+00:00" "2025-11-19T04:07:10.017+00:00" "2025-11-19T04:07:10.017+00:00" "2025-11-19T04:07:10.017+00:00" ...
- $ lastParsed                      : chr [1:15000] "2025-11-19T04:34:50.914+00:00" "2025-11-19T04:36:05.589+00:00" "2025-11-19T04:35:11.024+00:00" "2025-11-19T04:36:09.390+00:00" ...
- $ crawlId                         : int [1:15000] 170 170 170 170 170 170 170 170 170 170 ...
- $ basisOfRecord                   : chr [1:15000] "PRESERVED_SPECIMEN" "PRESERVED_SPECIMEN" "PRESERVED_SPECIMEN" "PRESERVED_SPECIMEN" ...
- $ individualCount                 : int [1:15000] 1 3 3 4 4 4 4 4 4 4 ...
- $ occurrenceStatus                : chr [1:15000] "PRESENT" "PRESENT" "PRESENT" "PRESENT" ...
- $ taxonKey                        : int [1:15000] 2872218 2693919 2693919 6643 7275870 6643 2754367 3189414 3189414 3189414 ...
- $ kingdomKey                      : int [1:15000] 6 6 6 6 6 6 6 6 6 6 ...
- $ phylumKey                       : int [1:15000] 7707728 7707728 7707728 7707728 7707728 7707728 7707728 7707728 7707728 7707728 ...
- $ classKey                        : int [1:15000] 196 196 196 220 220 220 196 220 220 220 ...
- $ orderKey                        : int [1:15000] 551 1369 1369 1353 1353 1353 1171 1353 1353 1353 ...
- $ familyKey                       : int [1:15000] 6979 3740 3740 6643 6643 6643 7694 6643 6643 6643 ...
- $ genusKey                        : int [1:15000] 2872218 2693919 2693919 NA 7275870 NA 2754367 3189414 3189414 3189414 ...
- $ acceptedTaxonKey                : int [1:15000] 2872218 2693919 2693919 6643 7275870 6643 2754367 3189414 3189414 3189414 ...
- $ acceptedScientificName          : chr [1:15000] "Anthurium Schott" "Greigia Regel" "Greigia Regel" "Marcgraviaceae" ...
- $ kingdom                         : chr [1:15000] "Plantae" "Plantae" "Plantae" "Plantae" ...
- $ phylum                          : chr [1:15000] "Tracheophyta" "Tracheophyta" "Tracheophyta" "Tracheophyta" ...
- $ order                           : chr [1:15000] "Alismatales" "Poales" "Poales" "Ericales" ...
- $ family                          : chr [1:15000] "Araceae" "Bromeliaceae" "Bromeliaceae" "Marcgraviaceae" ...
- $ genus                           : chr [1:15000] "Anthurium" "Greigia" "Greigia" NA ...
- $ taxonRank                       : chr [1:15000] "GENUS" "GENUS" "GENUS" "FAMILY" ...
- $ taxonomicStatus                 : chr [1:15000] "ACCEPTED" "ACCEPTED" "ACCEPTED" "ACCEPTED" ...
- $ dateIdentified                  : chr [1:15000] "2025-01-01T00:00:00" "2025-01-01T00:00:00" "2025-01-01T00:00:00" NA ...
- $ elevation                       : num [1:15000] 1500 2647 2900 1550 1178 ...
- $ continent                       : chr [1:15000] "SOUTH_AMERICA" "SOUTH_AMERICA" "SOUTH_AMERICA" "SOUTH_AMERICA" ...
- $ stateProvince                   : chr [1:15000] "Huánuco" "Cundinamarca" "Antioquia" "Huánuco" ...
- $ year                            : int [1:15000] 2024 2023 2023 2022 2022 2022 2022 2022 2022 2022 ...
- $ month                           : int [1:15000] 7 2 12 2 2 2 2 2 2 2 ...
- $ day                             : int [1:15000] 24 26 8 21 17 19 23 28 20 24 ...
- $ eventDate                       : chr [1:15000] "2024-07-24" "2023-02-26" "2023-12-08" "2022-02-21" ...
- $ startDayOfYear                  : int [1:15000] 206 57 342 52 48 50 54 59 51 55 ...
- $ endDayOfYear                    : int [1:15000] 206 57 342 52 48 50 54 59 51 55 ...
- $ modified                        : chr [1:15000] "2025-01-27T10:44:00.000+00:00" "2025-10-24T12:59:00.000+00:00" "2025-10-28T11:15:00.000+00:00" "2025-07-18T15:21:00.000+00:00" ...
- $ lastInterpreted                 : chr [1:15000] "2025-11-19T04:34:50.914+00:00" "2025-11-19T04:36:05.589+00:00" "2025-11-19T04:35:11.024+00:00" "2025-11-19T04:36:09.390+00:00" ...
- $ license                         : chr [1:15000] "http://creativecommons.org/licenses/by/4.0/legalcode" "http://creativecommons.org/licenses/by/4.0/legalcode" "http://creativecommons.org/licenses/by/4.0/legalcode" "http://creativecommons.org/licenses/by/4.0/legalcode" ...
- $ isSequenced                     : logi [1:15000] FALSE FALSE FALSE FALSE FALSE FALSE ...
- $ identifier                      : chr [1:15000] "urn:catalog:MO:Tropicos:104163459" "urn:catalog:MO:Tropicos:104850887" "urn:catalog:MO:Tropicos:104850967" "urn:catalog:MO:Tropicos:104563034" ...
- $ facts                           : chr [1:15000] "none" "none" "none" "none" ...
- $ relations                       : chr [1:15000] "none" "none" "none" "none" ...
- $ isInCluster                     : logi [1:15000] FALSE TRUE TRUE FALSE FALSE FALSE ...
- $ datasetName                     : chr [1:15000] "Tropicos" "Tropicos" "Tropicos" "Tropicos" ...
- $ recordedBy                      : chr [1:15000] "Armen Enikolopov|Loayza Alva, Albert Alfredo|Kamimila Bettelyoun" "Llanos-Prieto, Alejandro" "Llanos-Prieto, Alejandro" "Rocío Rojas|Rodolfo Vásquez|J.Flores|J. Gomez" ...
- $ geodeticDatum                   : chr [1:15000] "WGS84" "WGS84" "WGS84" "WGS84" ...
- $ class                           : chr [1:15000] "Liliopsida" "Liliopsida" "Liliopsida" "Magnoliopsida" ...
- $ countryCode                     : chr [1:15000] "PE" "CO" "CO" "PE" ...
- $ recordedByIDs                   : chr [1:15000] "none" "none" "none" "none" ...
- $ identifiedByIDs                 : chr [1:15000] "none" "none" "none" "none" ...
- $ gbifRegion                      : chr [1:15000] "LATIN_AMERICA" "LATIN_AMERICA" "LATIN_AMERICA" "LATIN_AMERICA" ...
- $ country                         : chr [1:15000] "Peru" "Colombia" "Colombia" "Peru" ...
- $ publishedByGbifRegion           : chr [1:15000] "NORTH_AMERICA" "NORTH_AMERICA" "NORTH_AMERICA" "NORTH_AMERICA" ...
- $ nomenclaturalStatus             : chr [1:15000] "No opinion" "Legitimate" "Legitimate" "nom. cons." ...
- $ rightsHolder                    : chr [1:15000] "Missouri Botanical Garden" "Missouri Botanical Garden" "Missouri Botanical Garden" "Missouri Botanical Garden" ...
- $ identifier.1                    : chr [1:15000] "urn:catalog:MO:Tropicos:104163459" "urn:catalog:MO:Tropicos:104850887" "urn:catalog:MO:Tropicos:104850967" "urn:catalog:MO:Tropicos:104563034" ...
- $ recordNumber                    : chr [1:15000] "340" "107" "218" "11025" ...
- $ nomenclaturalCode               : chr [1:15000] "ICNafp" "ICNafp" "ICNafp" "ICNafp" ...
- $ county                          : chr [1:15000] "Leoncio Prado" "Cabrera" "Sonsón" "Leoncio Prado" ...
- $ locality                        : chr [1:15000] "32km NE of Tingo Maria on Ruta 5N to Pucallpa (19km E of Puente Pumahuas), in vicinity of village of San Isidro"| __truncated__ "vereda Nuñez" "vereda Norí, ascenso al “Cerro de Las Papas” o “Los Parados”" "Distrito Pucayacu. Parque Nacional Cordillera Azul. Campamento \"Jergon\" hacia el campamento \"Volante\"." ...
- $ fieldNumber                     : chr [1:15000] "83" "1" "2" "87" ...
- $ collectionCode                  : chr [1:15000] "Tropicos" "Tropicos" "Tropicos" "Tropicos" ...
- $ gbifID                          : chr [1:15000] "5054558306" "5868815018" "5868814678" "5831595616" ...
- $ occurrenceID                    : chr [1:15000] "urn:catalog:MO:Tropicos:104163459" "urn:catalog:MO:Tropicos:104850887" "urn:catalog:MO:Tropicos:104850967" "urn:catalog:MO:Tropicos:104563034" ...
- $ type                            : chr [1:15000] "PhysicalObject" "PhysicalObject" "PhysicalObject" "PhysicalObject" ...
- $ taxonID                         : chr [1:15000] "100556477" "100567685" "100567739" "42000094" ...
- $ catalogNumber                   : chr [1:15000] "104163459" "104850887" "104850967" "104563034" ...
- $ institutionCode                 : chr [1:15000] "COL" "COL" "COL" "COL" ...
- $ ownerInstitutionCode            : chr [1:15000] "MOBOT" "MOBOT" "MOBOT" "MOBOT" ...
- $ bibliographicCitation           : chr [1:15000] "http://www.tropicos.org/Specimen/104163459" "http://www.tropicos.org/Specimen/104850887" "http://www.tropicos.org/Specimen/104850967" "http://www.tropicos.org/Specimen/104563034" ...
- $ collectionID                    : chr [1:15000] "http://biocol.org/urn:lsid:biocol.org:col:15859" "http://biocol.org/urn:lsid:biocol.org:col:15859" "http://biocol.org/urn:lsid:biocol.org:col:15859" "http://biocol.org/urn:lsid:biocol.org:col:15859" ...
- $ name                            : chr [1:15000] "Anthurium Schott" "Greigia Regel" "Greigia Regel" "Marcgraviaceae" ...
- $ typeStatus                      : chr [1:15000] NA "Holotype" "Holotype" NA ...
- $ elevationAccuracy               : num [1:15000] NA NA NA 50 NA NA NA NA NA NA ...
- $ identifiedBy                    : chr [1:15000] NA NA NA NA ...
- $ speciesKey                      : int [1:15000] NA NA NA NA NA NA NA NA NA NA ...
- $ species                         : chr [1:15000] NA NA NA NA ...
- $ genericName                     : chr [1:15000] NA NA NA NA ...
- $ specificEpithet                 : chr [1:15000] NA NA NA NA ...
- $ references                      : chr [1:15000] NA NA NA NA ...
- $ combinationAuthors              : chr [1:15000] NA NA NA NA ...
- $ municipality                    : chr [1:15000] NA NA NA NA ...
- $ verbatimScientificName          : chr [1:15000] NA NA NA NA ...
- $ namePublishedIn                 : chr [1:15000] NA NA NA NA ...
- $ http...unknown.org.verbatimLabel: chr [1:15000] NA NA NA NA ...
- $ combinationYear                 : chr [1:15000] NA NA NA NA ...
- $ canonicalName                   : chr [1:15000] NA NA NA NA ...
- $ iucnRedListCategory             : chr [1:15000] NA NA NA NA ...
- $ basionymAuthors                 : chr [1:15000] NA NA NA NA ...
- $ identificationQualifier         : chr [1:15000] NA NA NA NA ...
- $ infraspecificEpithet            : chr [1:15000] NA NA NA NA ...
-  [list output truncated]</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save a local copy so participants can load it without downloading</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">"data"</span>)) <span class="fu">dir.create</span>(<span class="st">"data"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(dat_raw, <span class="st">"data/herbaria_raw_epiphytes.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat_raw)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Save a local copy so participants can load it without downloading</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">"data"</span>)) <span class="fu">dir.create</span>(<span class="st">"data"</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(dat_raw, <span class="st">"data/herbaria_raw_epiphytes.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -413,12 +312,13 @@ the same dataset is stored in the <code>data/</code> folder.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the previously saved GBIF dataset</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>dat_raw <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/herbaria_raw_epiphytes.csv"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check dimensions</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the previously saved GBIF dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dat_raw <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/herbaria_raw_epiphytes.csv"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">show_col_types =</span> <span class="cn">FALSE</span>, <span class="at">guess_max =</span> <span class="cn">Inf</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Check dimensions</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 15000   114</code></pre>
@@ -430,46 +330,46 @@ the same dataset is stored in the <code>data/</code> folder.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat_raw <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    species,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    decimalLongitude,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    decimalLatitude,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    countryCode,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    year,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    basisOfRecord,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    individualCount,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    institutionCode,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    datasetName,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    gbifID</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(decimalLongitude),</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                <span class="sc">!</span><span class="fu">is.na</span>(decimalLatitude)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(basisOfRecord <span class="sc">==</span> <span class="st">"PRESERVED_SPECIMEN"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">lon =</span> decimalLongitude,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">lat =</span> decimalLatitude)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">lon =</span> <span class="fu">as.numeric</span>(lon),</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">lat =</span> <span class="fu">as.numeric</span>(lat)</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>     )</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    species,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    decimalLongitude,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    decimalLatitude,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    countryCode,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    year,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    basisOfRecord,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    individualCount,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    institutionCode,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    datasetName,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    gbifID</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(decimalLongitude),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="sc">!</span><span class="fu">is.na</span>(decimalLatitude)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(basisOfRecord <span class="sc">==</span> <span class="st">"PRESERVED_SPECIMEN"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">lon =</span> decimalLongitude,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">lat =</span> decimalLatitude)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">lon =</span> <span class="fu">as.numeric</span>(lon),</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">lat =</span> <span class="fu">as.numeric</span>(lat)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>     )</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 14,890
 Columns: 10
-$ species         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
-$ lon             &lt;dbl&gt; -75.82953, -74.48056, -75.26861, -76.10306, -76.10167,…
-$ lat             &lt;dbl&gt; -9.221861, 3.893611, 5.810000, -8.490833, -8.490278, -…
-$ countryCode     &lt;chr&gt; "PE", "CO", "CO", "PE", "PE", "PE", "PE", "PE", "PE", …
-$ year            &lt;dbl&gt; 2024, 2023, 2023, 2022, 2022, 2022, 2022, 2022, 2022, …
-$ basisOfRecord   &lt;chr&gt; "PRESERVED_SPECIMEN", "PRESERVED_SPECIMEN", "PRESERVED…
-$ individualCount &lt;dbl&gt; 1, 3, 3, 4, 4, 4, 4, 4, 4, 4, 8, 1, 4, 4, 4, 4, 4, 3, …
-$ institutionCode &lt;chr&gt; "COL", "COL", "COL", "COL", "COL", "COL", "COL", "COL"…
-$ datasetName     &lt;chr&gt; "Tropicos", "Tropicos", "Tropicos", "Tropicos", "Tropi…
-$ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 583160…</code></pre>
+$ species         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
+$ lon             &lt;dbl&gt; -75.82953, -74.48056, -75.26861, -76.10306, -76.10167,~
+$ lat             &lt;dbl&gt; -9.221861, 3.893611, 5.810000, -8.490833, -8.490278, -~
+$ countryCode     &lt;chr&gt; "PE", "CO", "CO", "PE", "PE", "PE", "PE", "PE", "PE", ~
+$ year            &lt;dbl&gt; 2024, 2023, 2023, 2022, 2022, 2022, 2022, 2022, 2022, ~
+$ basisOfRecord   &lt;chr&gt; "PRESERVED_SPECIMEN", "PRESERVED_SPECIMEN", "PRESERVED~
+$ individualCount &lt;dbl&gt; 1, 3, 3, 4, 4, 4, 4, 4, 4, 4, 8, 1, 4, 4, 4, 4, 4, 3, ~
+$ institutionCode &lt;chr&gt; "COL", "COL", "COL", "COL", "COL", "COL", "COL", "COL"~
+$ datasetName     &lt;chr&gt; "Tropicos", "Tropicos", "Tropicos", "Tropicos", "Tropi~
+$ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 583160~</code></pre>
 </div>
 </div>
 </section>
@@ -480,16 +380,16 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of records</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of records</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 15000</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># names of all columns</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># names of all columns</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [1] "key"                              "scientificName"                  
@@ -552,45 +452,45 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># quick preview</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># quick preview</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 114
+<pre><code># A tibble: 6 x 114
          key scientificName   decimalLatitude decimalLongitude issues datasetKey
        &lt;dbl&gt; &lt;chr&gt;                      &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     
-1 5054558306 Anthurium Schott           -9.22            -75.8 cdrou… e053ff53-…
-2 5868815018 Greigia Regel               3.89            -74.5 cdrou… e053ff53-…
-3 5868814678 Greigia Regel               5.81            -75.3 cdrou… e053ff53-…
-4 5831595616 Marcgraviaceae             -8.49            -76.1 cdrou… e053ff53-…
-5 5831605446 Norantea Aubl.             -8.49            -76.1 cdrou… e053ff53-…
-6 5831614206 Marcgraviaceae             -8.49            -76.1 cdrou… e053ff53-…
-# ℹ 108 more variables: publishingOrgKey &lt;chr&gt;, installationKey &lt;chr&gt;,
+1 5054558306 Anthurium Schott           -9.22            -75.8 cdrou~ e053ff53-~
+2 5868815018 Greigia Regel               3.89            -74.5 cdrou~ e053ff53-~
+3 5868814678 Greigia Regel               5.81            -75.3 cdrou~ e053ff53-~
+4 5831595616 Marcgraviaceae             -8.49            -76.1 cdrou~ e053ff53-~
+5 5831605446 Norantea Aubl.             -8.49            -76.1 cdrou~ e053ff53-~
+6 5831614206 Marcgraviaceae             -8.49            -76.1 cdrou~ e053ff53-~
+# i 108 more variables: publishingOrgKey &lt;chr&gt;, installationKey &lt;chr&gt;,
 #   hostingOrganizationKey &lt;chr&gt;, publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;,
 #   lastCrawled &lt;dttm&gt;, lastParsed &lt;dttm&gt;, crawlId &lt;dbl&gt;, basisOfRecord &lt;chr&gt;,
 #   individualCount &lt;dbl&gt;, occurrenceStatus &lt;chr&gt;, taxonKey &lt;dbl&gt;,
 #   kingdomKey &lt;dbl&gt;, phylumKey &lt;dbl&gt;, classKey &lt;dbl&gt;, orderKey &lt;dbl&gt;,
 #   familyKey &lt;dbl&gt;, genusKey &lt;dbl&gt;, acceptedTaxonKey &lt;dbl&gt;,
-#   acceptedScientificName &lt;chr&gt;, kingdom &lt;chr&gt;, phylum &lt;chr&gt;, order &lt;chr&gt;, …</code></pre>
+#   acceptedScientificName &lt;chr&gt;, kingdom &lt;chr&gt;, phylum &lt;chr&gt;, order &lt;chr&gt;, ...</code></pre>
 </div>
 </div>
 <p>We now work with the filtered dataset <code>dat</code>, which contains only PRESERVED_SPECIMEN records with valid coordinates.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of cleaned records</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of cleaned records</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 14890</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># structure of the filtered data</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># structure of the filtered data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>tibble [14,890 × 10] (S3: tbl_df/tbl/data.frame)
+<pre><code>tibble [14,890 x 10] (S3: tbl_df/tbl/data.frame)
  $ species        : chr [1:14890] NA NA NA NA ...
  $ lon            : num [1:14890] -75.8 -74.5 -75.3 -76.1 -76.1 ...
  $ lat            : num [1:14890] -9.22 3.89 5.81 -8.49 -8.49 ...
@@ -604,8 +504,8 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basic summary of coordinate ranges</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dat[, <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basic summary of coordinate ranges</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dat[, <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      lon               lat          
@@ -623,24 +523,24 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>world_map <span class="ot">&lt;-</span> <span class="fu">borders</span>(<span class="st">"world"</span>, <span class="at">colour =</span> <span class="st">"gray70"</span>, <span class="at">fill =</span> <span class="st">"gray90"</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  world_map <span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> dat,</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat, <span class="at">colour =</span> institutionCode),</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.7</span>,</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Raw herbarium records from GBIF"</span>,</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colour indicates institutionCode"</span>,</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Latitude"</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>world_map <span class="ot">&lt;-</span> <span class="fu">borders</span>(<span class="st">"world"</span>, <span class="at">colour =</span> <span class="st">"gray70"</span>, <span class="at">fill =</span> <span class="st">"gray90"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  world_map <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> dat,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat, <span class="at">colour =</span> institutionCode),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.7</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Raw herbarium records from GBIF"</span>,</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colour indicates institutionCode"</span>,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Latitude"</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -657,41 +557,80 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 <section id="common-coordinate-problems-and-how-to-flag-them" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Common coordinate problems and how to flag them</h1>
 <p>CoordinateCleaner provides a set of tests that identify typical errors found in herbarium data. These tests operate at the <strong>record level</strong>, flagging individual coordinates that are likely incorrect. Here we apply the most relevant tests for collection-based datasets.</p>
-<p>Before running any test, we define a helper function that will help us visualise flagged and kept points.</p>
+<p>Before running any test, we define two helper functions: one to visualise flagged and kept points, and one to print a short summary of each test.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How to read the output of the tests
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <code>value = "flagged"</code>, every CoordinateCleaner test returns a logical vector where <strong><code>TRUE</code> = the record passes the test (clean, we keep it)</strong> and <strong><code>FALSE</code> = the record is flagged (problematic)</strong>. That is why we call these vectors <code>keep_*</code> and filter with <code>dat[keep_*, ]</code>.</p>
+</div>
+</div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot_flags <span class="ot">&lt;-</span> <span class="cf">function</span>(data, keep, title) {</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 'keep' is a logical vector: TRUE = kept, FALSE = problematic</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  data_kept    <span class="ot">&lt;-</span> data[keep, ]</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  data_flagged <span class="ot">&lt;-</span> data[<span class="sc">!</span>keep, ]</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  world_map <span class="ot">&lt;-</span> <span class="fu">borders</span>(<span class="st">"world"</span>, <span class="at">colour =</span> <span class="st">"gray70"</span>, <span class="at">fill =</span> <span class="st">"gray90"</span>)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    world_map <span class="sc">+</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> data_kept,</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(lon, lat),</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"darkgreen"</span>,</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.6</span>,</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.7</span></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> data_flagged,</span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(lon, lat),</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"red"</span>,</span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.8</span>,</span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.8</span></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title,</span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"Green = kept, Red = flagged"</span></span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>plot_flags <span class="ot">&lt;-</span> <span class="cf">function</span>(data, keep, title) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 'keep' is a logical vector: TRUE = kept, FALSE = flagged</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  data_kept    <span class="ot">&lt;-</span> data[keep, ]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  data_flagged <span class="ot">&lt;-</span> data[<span class="sc">!</span>keep, ]</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  world_map <span class="ot">&lt;-</span> <span class="fu">borders</span>(<span class="st">"world"</span>, <span class="at">colour =</span> <span class="st">"gray70"</span>, <span class="at">fill =</span> <span class="st">"gray90"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    world_map <span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> data_kept,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(lon, lat),</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"darkgreen"</span>,</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.6</span>,</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.7</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> data_flagged,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(lon, lat),</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.8</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title,</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"Green = kept, Red = flagged"</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>report_test <span class="ot">&lt;-</span> <span class="cf">function</span>(keep, name) {</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  Total records:  "</span>, <span class="fu">length</span>(keep), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  Kept (clean):   "</span>, <span class="fu">sum</span>(keep, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  Flagged:        "</span>, <span class="fu">sum</span>(<span class="sc">!</span>keep, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The sea test needs a map of the land masses, which is downloaded from <a href="https://www.naturalearthdata.com/">Natural Earth</a>. We download it once here. If the download fails (for example, with a slow or no internet connection during the workshop), we fall back to the country polygons that come installed with <code>rnaturalearthdata</code>, so the tutorial still runs.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>get_land <span class="ot">&lt;-</span> <span class="cf">function</span>(scale) {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    rnaturalearth<span class="sc">::</span><span class="fu">ne_download</span>(<span class="at">scale =</span> scale, <span class="at">type =</span> <span class="st">"land"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">category =</span> <span class="st">"physical"</span>, <span class="at">returnclass =</span> <span class="st">"sf"</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="st">"Natural Earth download failed; using country polygons instead."</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>      rnaturalearth<span class="sc">::</span><span class="fu">ne_countries</span>(<span class="at">scale =</span> scale, <span class="at">returnclass =</span> <span class="st">"sf"</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>land_110 <span class="ot">&lt;-</span> <span class="fu">get_land</span>(<span class="dv">110</span>)  <span class="co"># default resolution of cc_sea()</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>land_50  <span class="ot">&lt;-</span> <span class="fu">get_land</span>(<span class="dv">50</span>)   <span class="co"># default resolution of clean_coordinates()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <hr>
@@ -701,15 +640,23 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>flag_val <span class="ot">&lt;-</span> <span class="fu">cc_val</span>(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = problematic, FALSE = kept</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>keep_val <span class="ot">&lt;-</span> <span class="fu">cc_val</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = kept, FALSE = flagged</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_val, <span class="st">"Invalid coordinates test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Invalid coordinates test 
+  Total records:   14890 
+  Kept (clean):    14890 
+  Flagged:         0 </code></pre>
 </div>
-<p>All valid coordinates</p>
+</div>
+<p>All coordinates are valid.</p>
 <hr>
 </section>
 <section id="zero-coordinates" class="level2" data-number="6.2">
@@ -718,64 +665,50 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>flag_zero <span class="ot">&lt;-</span> <span class="fu">cc_zero</span>(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> dat,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon =</span> <span class="st">"lon"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> <span class="st">"lat"</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>keep_zero <span class="ot">&lt;-</span> <span class="fu">cc_zero</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_zero, <span class="st">"Zero coordinates test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Zero coordinates test 
+  Total records:   14890 
+  Kept (clean):    14890 
+  Flagged:         0 </code></pre>
 </div>
-<p>we do not have coordinates in 0,0</p>
+</div>
+<p>We do not have coordinates at (0,0).</p>
 <hr>
 </section>
 <section id="sea-coordinates" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="sea-coordinates"><span class="header-section-number">6.3</span> Sea coordinates</h2>
-<p>Herbarium specimens should not be in the ocean, so this test removes incorrect decimal values or swapped coordinates.</p>
+<p>Herbarium specimens should not be in the ocean, so this test flags incorrect decimal values or swapped coordinates.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>flag_sea <span class="ot">&lt;-</span> <span class="fu">cc_sea</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = in the sea, FALSE = kept</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>flag_sea <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(flag_sea)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>n_total   <span class="ot">&lt;-</span> <span class="fu">length</span>(flag_sea)</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>n_flagged <span class="ot">&lt;-</span> <span class="fu">sum</span>(flag_sea, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>n_kept    <span class="ot">&lt;-</span> n_total <span class="sc">-</span> n_flagged</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sea coordinates test</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>keep_sea <span class="ot">&lt;-</span> <span class="fu">cc_sea</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref     =</span> land_110,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = on land (kept), FALSE = in the sea (flagged)</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_sea, <span class="st">"Sea coordinates test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Sea coordinates test</code></pre>
+<pre><code>Sea coordinates test 
+  Total records:   14890 
+  Kept (clean):    14751 
+  Flagged:         139 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total records:"</span>, n_total, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Total records: 14890 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Kept (on land):"</span>, n_kept, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Kept (on land): 139 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Flagged (in sea):"</span>, n_flagged, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Flagged (in sea): 14751 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, flag_sea, <span class="st">"Sea coordinates flagged by cc_sea()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, keep_sea, <span class="st">"Sea coordinates flagged by cc_sea()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -786,8 +719,8 @@ $ gbifID          &lt;dbl&gt; 5054558306, 5868815018, 5868814678, 5831595616, 58
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[flag_sea, ] <span class="co"># here we remove the flagged records</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[keep_sea, ] <span class="co"># here we remove the flagged records</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 14751</code></pre>
@@ -802,62 +735,38 @@ We first convert country codes to ISO3, as required by <code>cc_coun()</code>.</
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">countryCode =</span> <span class="fu">countrycode</span>(</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>      countryCode,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">origin =</span> <span class="st">"iso2c"</span>,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">destination =</span> <span class="st">"iso3c"</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">countryCode =</span> <span class="fu">countrycode</span>(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>      countryCode,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">origin =</span> <span class="st">"iso2c"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">destination =</span> <span class="st">"iso3c"</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>flag_country <span class="ot">&lt;-</span> <span class="fu">cc_coun</span>(</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iso3    =</span> <span class="st">"countryCode"</span>,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = mismatch, FALSE = kept</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>flag_country <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(flag_country)</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>n_total   <span class="ot">&lt;-</span> <span class="fu">length</span>(flag_country)</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>n_flagged <span class="ot">&lt;-</span> <span class="fu">sum</span>(flag_country, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>n_kept    <span class="ot">&lt;-</span> n_total <span class="sc">-</span> n_flagged</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Country mismatch test</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>keep_country <span class="ot">&lt;-</span> <span class="fu">cc_coun</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iso3    =</span> <span class="st">"countryCode"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span>  <span class="co"># TRUE = matching country (kept), FALSE = mismatch (flagged)</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_country, <span class="st">"Country mismatch test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Country mismatch test</code></pre>
+<pre><code>Country mismatch test 
+  Total records:   14751 
+  Kept (clean):    14381 
+  Flagged:         370 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total records:"</span>, n_total, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Total records: 14751 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Kept (matching country):"</span>, n_kept, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Kept (matching country): 370 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Flagged (country mismatch):"</span>, n_flagged, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Flagged (country mismatch): 14381 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, flag_country, <span class="st">"Country mismatches flagged by cc_coun()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, keep_country, <span class="st">"Country mismatches flagged by cc_coun()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -868,8 +777,8 @@ We first convert country codes to ISO3, as required by <code>cc_coun()</code>.</
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[flag_country, ]</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[keep_country, ]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 14381</code></pre>
@@ -884,49 +793,25 @@ This test flags exact duplicates based on species name and coordinates.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>flag_dupl <span class="ot">&lt;-</span> <span class="fu">cc_dupl</span>(</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">species =</span> <span class="st">"species"</span>,</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>flag_dupl <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(flag_dupl)</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>n_total   <span class="ot">&lt;-</span> <span class="fu">length</span>(flag_dupl)</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>n_flagged <span class="ot">&lt;-</span> <span class="fu">sum</span>(flag_dupl, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>n_kept    <span class="ot">&lt;-</span> n_total <span class="sc">-</span> n_flagged</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Duplicates test</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>keep_dupl <span class="ot">&lt;-</span> <span class="fu">cc_dupl</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">species =</span> <span class="st">"species"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_dupl, <span class="st">"Duplicates test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Duplicates test</code></pre>
+<pre><code>Duplicates test 
+  Total records:   14381 
+  Kept (clean):    11823 
+  Flagged:         2558 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total records:"</span>, n_total, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Total records: 14381 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Kept (unique coordinates per species):"</span>, n_kept, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Kept (unique coordinates per species): 2558 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Flagged (duplicated records):"</span>, n_flagged, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Flagged (duplicated records): 11823 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, flag_dupl, <span class="st">"Duplicated records flagged by cc_dupl()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, keep_dupl, <span class="st">"Duplicated records flagged by cc_dupl()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -937,8 +822,8 @@ This test flags exact duplicates based on species name and coordinates.</p>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[flag_dupl, ]</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[keep_dupl, ]</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11823</code></pre>
@@ -952,48 +837,24 @@ This test flags exact duplicates based on species name and coordinates.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>flag_inst <span class="ot">&lt;-</span> <span class="fu">cc_inst</span>(</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>flag_inst <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(flag_inst)</span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>n_total   <span class="ot">&lt;-</span> <span class="fu">length</span>(flag_inst)</span>
-<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>n_flagged <span class="ot">&lt;-</span> <span class="fu">sum</span>(flag_inst, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>n_kept    <span class="ot">&lt;-</span> n_total <span class="sc">-</span> n_flagged</span>
-<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Institution coordinates test</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>keep_inst <span class="ot">&lt;-</span> <span class="fu">cc_inst</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_inst, <span class="st">"Institution coordinates test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Institution coordinates test</code></pre>
+<pre><code>Institution coordinates test 
+  Total records:   11823 
+  Kept (clean):    11792 
+  Flagged:         31 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total records:"</span>, n_total, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Total records: 11823 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Kept (not at institution):"</span>, n_kept, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Kept (not at institution): 31 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Flagged (institution coordinates):"</span>, n_flagged, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Flagged (institution coordinates): 11792 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, flag_inst, <span class="st">"Institution coordinates flagged by cc_inst()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, keep_inst, <span class="st">"Institution coordinates flagged by cc_inst()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1004,8 +865,8 @@ This test flags exact duplicates based on species name and coordinates.</p>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[flag_inst, ]</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[keep_inst, ]</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11792</code></pre>
@@ -1015,44 +876,47 @@ This test flags exact duplicates based on species name and coordinates.</p>
 </section>
 <section id="capitals-and-centroids" class="level2" data-number="6.7">
 <h2 data-number="6.7" class="anchored" data-anchor-id="capitals-and-centroids"><span class="header-section-number">6.7</span> Capitals and centroids</h2>
-<p>Common geocoding artifacts where specimen locality is replaced by a political centroid.</p>
+<p>Common geocoding artifacts where specimen locality is replaced by a country capital or a political centroid.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>flag_cap <span class="ot">&lt;-</span> <span class="fu">cc_cap</span>(</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
-<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>flag_cap <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(flag_cap)</span>
-<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>flag_cen <span class="ot">&lt;-</span> <span class="fu">cc_cen</span>(</span>
-<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
-<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
-<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
-<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
-<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a>n_total_cap   <span class="ot">&lt;-</span> <span class="fu">length</span>(flag_cap)</span>
-<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a>n_flagged_cap <span class="ot">&lt;-</span> <span class="fu">sum</span>(flag_cap, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Capitals test</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>keep_cap <span class="ot">&lt;-</span> <span class="fu">cc_cap</span>(</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>keep_cen <span class="ot">&lt;-</span> <span class="fu">cc_cen</span>(</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> dat,</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon     =</span> <span class="st">"lon"</span>,</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat     =</span> <span class="st">"lat"</span>,</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">value   =</span> <span class="st">"flagged"</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_cap, <span class="st">"Capitals test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Capitals test</code></pre>
+<pre><code>Capitals test 
+  Total records:   11792 
+  Kept (clean):    11766 
+  Flagged:         26 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Flagged (capital coordinates):"</span>, n_flagged_cap, <span class="st">"of"</span>, n_total_cap, <span class="st">"records</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report_test</span>(keep_cen, <span class="st">"Centroids test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Flagged (capital coordinates): 11766 of 11792 records</code></pre>
+<pre><code>Centroids test 
+  Total records:   11792 
+  Kept (clean):    11792 
+  Flagged:         0 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, flag_cap, <span class="st">"Capital coordinates flagged by cc_cap()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>keep_capcen <span class="ot">&lt;-</span> keep_cap <span class="sc">&amp;</span> keep_cen</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(dat, keep_capcen, <span class="st">"Capital/centroid coordinates flagged by cc_cap() + cc_cen()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1063,8 +927,8 @@ This test flags exact duplicates based on species name and coordinates.</p>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[flag_cap, ]</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[keep_capcen, ]</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11766</code></pre>
@@ -1080,68 +944,69 @@ This test flags exact duplicates based on species name and coordinates.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat_raw <span class="sc">%&gt;%</span> </span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
-<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>    species,</span>
-<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>    decimalLongitude,</span>
-<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>    decimalLatitude,</span>
-<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>    countryCode,</span>
-<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>    year,</span>
-<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>    basisOfRecord,</span>
-<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>    individualCount,</span>
-<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>    institutionCode,</span>
-<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>    datasetName,</span>
-<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>    gbifID</span>
-<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(decimalLongitude),</span>
-<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>                <span class="sc">!</span><span class="fu">is.na</span>(decimalLatitude)) <span class="sc">%&gt;%</span></span>
-<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(basisOfRecord <span class="sc">==</span> <span class="st">"PRESERVED_SPECIMEN"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">lon =</span> decimalLongitude,</span>
-<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">lat =</span> decimalLatitude)</span>
-<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(</span>
-<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">lon =</span> <span class="fu">as.numeric</span>(lon),</span>
-<span id="cb78-23"><a href="#cb78-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">lat =</span> <span class="fu">as.numeric</span>(lat)</span>
-<span id="cb78-24"><a href="#cb78-24" aria-hidden="true" tabindex="-1"></a>     )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    species,</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    decimalLongitude,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    decimalLatitude,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    countryCode,</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    year,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    basisOfRecord,</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    individualCount,</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>    institutionCode,</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>    datasetName,</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>    gbifID</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(decimalLongitude),</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>                <span class="sc">!</span><span class="fu">is.na</span>(decimalLatitude)) <span class="sc">%&gt;%</span></span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(basisOfRecord <span class="sc">==</span> <span class="st">"PRESERVED_SPECIMEN"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">lon =</span> decimalLongitude,</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">lat =</span> decimalLatitude)</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">lon =</span> <span class="fu">as.numeric</span>(lon),</span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">lat =</span> <span class="fu">as.numeric</span>(lat)</span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>     )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>And then perform the cleaning</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>dat_cc <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">countryCode =</span> <span class="fu">countrycode</span>(</span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>      countryCode,</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">origin =</span> <span class="st">"iso2c"</span>,</span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">destination =</span> <span class="st">"iso3c"</span></span>
-<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>dat_cc <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(dat_cc)</span>
-<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-12"><a href="#cb79-12" aria-hidden="true" tabindex="-1"></a>flags_all <span class="ot">&lt;-</span> <span class="fu">clean_coordinates</span>(</span>
-<span id="cb79-13"><a href="#cb79-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> dat_cc,</span>
-<span id="cb79-14"><a href="#cb79-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon =</span> <span class="st">"lon"</span>,</span>
-<span id="cb79-15"><a href="#cb79-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> <span class="st">"lat"</span>,</span>
-<span id="cb79-16"><a href="#cb79-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">species =</span> <span class="st">"species"</span>,</span>
-<span id="cb79-17"><a href="#cb79-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">countries =</span> <span class="st">"countryCode"</span>,</span>
-<span id="cb79-18"><a href="#cb79-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">tests =</span> <span class="fu">c</span>(</span>
-<span id="cb79-19"><a href="#cb79-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"capitals"</span>,</span>
-<span id="cb79-20"><a href="#cb79-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"centroids"</span>,</span>
-<span id="cb79-21"><a href="#cb79-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"equal"</span>,</span>
-<span id="cb79-22"><a href="#cb79-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zeros"</span>,</span>
-<span id="cb79-23"><a href="#cb79-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"countries"</span>,</span>
-<span id="cb79-24"><a href="#cb79-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"institutions"</span>,</span>
-<span id="cb79-25"><a href="#cb79-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"seas"</span>,</span>
-<span id="cb79-26"><a href="#cb79-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"duplicates"</span>,</span>
-<span id="cb79-27"><a href="#cb79-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gbif"</span>,</span>
-<span id="cb79-28"><a href="#cb79-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"validity"</span></span>
-<span id="cb79-29"><a href="#cb79-29" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb79-30"><a href="#cb79-30" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb79-31"><a href="#cb79-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-32"><a href="#cb79-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(flags_all)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>dat_cc <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">countryCode =</span> <span class="fu">countrycode</span>(</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>      countryCode,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">origin =</span> <span class="st">"iso2c"</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">destination =</span> <span class="st">"iso3c"</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>dat_cc <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(dat_cc)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>flags_all <span class="ot">&lt;-</span> <span class="fu">clean_coordinates</span>(</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> dat_cc,</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon =</span> <span class="st">"lon"</span>,</span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> <span class="st">"lat"</span>,</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">species =</span> <span class="st">"species"</span>,</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">countries =</span> <span class="st">"countryCode"</span>,</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">seas_ref =</span> land_50,</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">tests =</span> <span class="fu">c</span>(</span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"capitals"</span>,</span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"centroids"</span>,</span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"equal"</span>,</span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zeros"</span>,</span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"countries"</span>,</span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"institutions"</span>,</span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"seas"</span>,</span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"duplicates"</span>,</span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gbif"</span>,</span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"validity"</span></span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(flags_all)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    .val     .equ     .zer     .cap     .cen     .sea     .con     .gbf 
@@ -1151,7 +1016,7 @@ This test flags exact duplicates based on species name and coordinates.</p>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(flags_all<span class="sc">$</span>.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(flags_all<span class="sc">$</span>.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1160,8 +1025,8 @@ FALSE  TRUE
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>cleaned_all <span class="ot">&lt;-</span> dat_cc[flags_all<span class="sc">$</span>.summary, ]</span>
-<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat_cc); <span class="fu">nrow</span>(cleaned_all)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>cleaned_all <span class="ot">&lt;-</span> dat_cc[flags_all<span class="sc">$</span>.summary, ]</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(dat_cc); <span class="fu">nrow</span>(cleaned_all)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 14890</code></pre>
@@ -1173,29 +1038,29 @@ FALSE  TRUE
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  world_map <span class="sc">+</span></span>
-<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> dat_cc,</span>
-<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat),</span>
-<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"gray60"</span>,</span>
-<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.4</span>,</span>
-<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.6</span></span>
-<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb86-12"><a href="#cb86-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> cleaned_all,</span>
-<span id="cb86-13"><a href="#cb86-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat),</span>
-<span id="cb86-14"><a href="#cb86-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>,</span>
-<span id="cb86-15"><a href="#cb86-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.6</span>,</span>
-<span id="cb86-16"><a href="#cb86-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.8</span></span>
-<span id="cb86-17"><a href="#cb86-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb86-18"><a href="#cb86-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb86-19"><a href="#cb86-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Epiphyte GBIF records before (gray) and after cleaning (green)"</span>,</span>
-<span id="cb86-20"><a href="#cb86-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
-<span id="cb86-21"><a href="#cb86-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Latitude"</span></span>
-<span id="cb86-22"><a href="#cb86-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb86-23"><a href="#cb86-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  world_map <span class="sc">+</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> dat_cc,</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat),</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"gray60"</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.4</span>,</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.6</span></span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> cleaned_all,</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat),</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkgreen"</span>,</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.6</span>,</span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.8</span></span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb63-18"><a href="#cb63-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb63-19"><a href="#cb63-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Epiphyte GBIF records before (gray) and after cleaning (green)"</span>,</span>
+<span id="cb63-20"><a href="#cb63-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
+<span id="cb63-21"><a href="#cb63-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Latitude"</span></span>
+<span id="cb63-22"><a href="#cb63-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb63-23"><a href="#cb63-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1208,28 +1073,29 @@ FALSE  TRUE
 </section>
 <section id="optional-advanced-step-spatial-outliers" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Optional advanced step: spatial outliers</h1>
+<p>This step is not run when the tutorial is rendered. Remove <code>eval = FALSE</code> (or copy the code) to try it yourself. Species with fewer than 7 unique records are not tested.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flag_out &lt;- cc_outl(</span></span>
-<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   x = cleaned_all,</span></span>
-<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   lon = "lon",</span></span>
-<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   lat = "lat",</span></span>
-<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   species = "species",</span></span>
-<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   method = "quantile",</span></span>
-<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   mltpl = 5,</span></span>
-<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   tdi = "km",</span></span>
-<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   thinning = FALSE</span></span>
-<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
-<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaned_no_out &lt;- cleaned_all[flag_out, ]</span></span>
-<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a><span class="co"># nrow(cleaned_all); nrow(cleaned_no_out)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>keep_out <span class="ot">&lt;-</span> <span class="fu">cc_outl</span>(</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> cleaned_all,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lon =</span> <span class="st">"lon"</span>,</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> <span class="st">"lat"</span>,</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">species =</span> <span class="st">"species"</span>,</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"quantile"</span>,</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mltpl =</span> <span class="dv">5</span>,</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">tdi =</span> <span class="dv">1000</span>,          <span class="co"># distance threshold in km</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="st">"flagged"</span>    <span class="co"># TRUE = kept, FALSE = outlier</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>cleaned_no_out <span class="ot">&lt;-</span> cleaned_all[keep_out, ]</span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(cleaned_all); <span class="fu">nrow</span>(cleaned_no_out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_flags(cleaned_all, flag_out, "Optional: spatial outliers flagged by cc_outl()")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_flags</span>(cleaned_all, keep_out, <span class="st">"Optional: spatial outliers flagged by cc_outl()"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -1238,20 +1104,21 @@ FALSE  TRUE
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(cleaned_all, <span class="st">"output/epiphytes_cleaned_coordinates.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">"output"</span>)) <span class="fu">dir.create</span>(<span class="st">"output"</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(cleaned_all, <span class="st">"output/epiphytes_cleaned_coordinates.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>flag_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(flags_all), <span class="fu">c</span>(<span class="fu">names</span>(dat_cc), <span class="st">".summary"</span>))</span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>removed <span class="ot">&lt;-</span> <span class="fu">sapply</span>(flags_all[flag_cols], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="sc">!</span>x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
-<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> flag_cols,</span>
-<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">removed_records =</span> <span class="fu">as.integer</span>(removed)</span>
-<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>flag_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(flags_all), <span class="fu">c</span>(<span class="fu">names</span>(dat_cc), <span class="st">".summary"</span>))</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>removed <span class="ot">&lt;-</span> <span class="fu">sapply</span>(flags_all[flag_cols], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="sc">!</span>x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> flag_cols,</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">removed_records =</span> <span class="fu">as.integer</span>(removed)</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    test removed_records
@@ -1271,7 +1138,7 @@ FALSE  TRUE
 <section id="wrap-up" class="level1" data-number="10">
 <h1 data-number="10"><span class="header-section-number">10</span> Wrap-up</h1>
 <p>Coordinate cleaning is an essential step before any biogeographic analysis. CoordinateCleaner offers a simple, transparent, and reproducible pipeline to detect many of the most common spatial issues.</p>
-<p>However, this is just one of several available approaches. There are other R packages (e.g., scrubr, spocc, bdc, sperrorest utilities), custom GIS workflows, and even manual curation strategies that can also be used depending on the project. Different research groups, herbarium networks, and biodiversity platforms use different cleaning pipelines.</p>
+<p>However, this is just one of several available approaches. There are other R packages (e.g., ParseGBIF, scrubr, spocc, bdc, PlantR, sperrorest utilities), custom GIS workflows, and even manual curation strategies that can also be used depending on the project. Different research groups, herbarium networks, and biodiversity platforms use different cleaning pipelines.</p>
 <p>The workflow presented here is meant to provide a straightforward and accessible option, especially for students and early-career researchers who need a clear, reproducible starting point.</p>
 </section>
 
